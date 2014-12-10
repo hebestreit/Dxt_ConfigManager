@@ -16,6 +16,7 @@ class Dxt_ConfigManager_Block_Config_Data_Edit extends Mage_Adminhtml_Block_Widg
         $this->_controller = 'config_data';
         $this->_mode = 'edit';
         $modelTitle = $this->_getModelTitle();
+        /** @todo add duplicate button */
         $this->_updateButton('save', 'label', $this->_getHelper()->__("Save $modelTitle"));
         $this->_addButton('saveandcontinue', array(
             'label' => $this->_getHelper()->__('Save and Continue Edit'),

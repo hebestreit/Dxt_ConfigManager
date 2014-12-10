@@ -13,7 +13,7 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
     {
         parent::__construct();
         $this->setId('grid_id');
-        // $this->setDefaultSort('COLUMN_ID');
+        $this->setDefaultSort('config_id');
         $this->setDefaultDir('asc');
         $this->setSaveParametersInSession(true);
     }
@@ -51,6 +51,16 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
                 'index' => 'scope_id'
             )
         );
+
+        $this->addColumn('website',
+            array(
+                'header'=> Mage::helper('catalog')->__('Websites'),
+                'width' => '100px',
+                'sortable'  => false,
+                'index'     => 'scope_id',
+                'type'      => 'options',
+                'options'   => Mage::getSingleton('adminhtml/system_store')->getWebsiteOptionHash(true),
+            ));
 
         $this->addColumn('path',
             array(

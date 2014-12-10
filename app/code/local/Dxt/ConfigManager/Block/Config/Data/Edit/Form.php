@@ -19,23 +19,20 @@ class Dxt_ConfigManager_Block_Config_Data_Edit_Form extends Mage_Adminhtml_Block
         return Mage::helper('dxt_configmanager');
     }
 
-    protected function _getModelTitle()
-    {
-        return 'Configuration';
-    }
 
     protected function _prepareForm()
     {
+        /** @var Dxt_ConfigManager_Model_Config $model */
         $model = $this->_getModel();
-        $modelTitle = $this->_getModelTitle();
         $form = new Varien_Data_Form(array(
             'id' => 'edit_form',
             'action' => $this->getUrl('*/*/save'),
             'method' => 'post'
         ));
 
+        // add field config label of system.xml as title
         $fieldset = $form->addFieldset('base_fieldset', array(
-            'legend' => $this->_getHelper()->__("$modelTitle Information"),
+            'legend' => $this->_getHelper()->__($model->getFieldsConfig()->getLabel()),
             'class' => 'fieldset-wide',
         ));
 
@@ -66,6 +63,13 @@ class Dxt_ConfigManager_Block_Config_Data_Edit_Form extends Mage_Adminhtml_Block
 
 //        $fieldset->addType('custom_element','Dxt_ConfigManager_Block_Form_Element_Custom');
 
+        $fieldset->addField('comment', 'hidden', array(
+            'name' => 'comment',
+            'label' => $this->_getHelper()->__('Config Path'),
+            'title' => $this->_getHelper()->__('Config Path'),
+            'after_element_html' => $model->getFieldsConfig()->getComment(),
+        ));
+
         $fieldset->addField('scope', 'select', array(
             'name' => 'scope',
             'label' => $this->_getHelper()->__('Scope'),
@@ -93,7 +97,7 @@ class Dxt_ConfigManager_Block_Config_Data_Edit_Form extends Mage_Adminhtml_Block
         ));
 
         $fieldset->addField('value', 'text', array(
-            'name' => 'path',
+            'name' => 'value',
             'label' => $this->_getHelper()->__('Config Value'),
             'title' => $this->_getHelper()->__('Config Value'),
             'required' => true,
