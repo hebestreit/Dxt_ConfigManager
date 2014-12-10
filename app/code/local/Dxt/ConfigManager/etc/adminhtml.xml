@@ -1,0 +1,30 @@
+<config>
+    <menu>
+        <system>
+            <children>
+                <config_manager translate="title" module="dxt_configmanager">
+                    <title>Config Manager</title>
+                    <sort_order>90</sort_order>
+                    <action>config_manager/index</action>
+                </config_manager>
+            </children>
+        </system>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config_manager translate="title" module="dxt_configmanager">
+                                <title>Config Manager</title>
+                                <sort_order>90</sort_order>
+                                <action>config_manager/index</action>
+                            </config_manager>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
