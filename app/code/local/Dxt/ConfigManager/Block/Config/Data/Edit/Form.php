@@ -22,7 +22,7 @@ class Dxt_ConfigManager_Block_Config_Data_Edit_Form extends Mage_Adminhtml_Block
 
     protected function _prepareForm()
     {
-        /** @var Dxt_ConfigManager_Model_Config $model */
+        /** @var Dxt_ConfigManager_Model_Config_Data $model */
         $model = $this->_getModel();
         $form = new Varien_Data_Form(array(
             'id' => 'edit_form',
@@ -63,12 +63,18 @@ class Dxt_ConfigManager_Block_Config_Data_Edit_Form extends Mage_Adminhtml_Block
 
 //        $fieldset->addType('custom_element','Dxt_ConfigManager_Block_Form_Element_Custom');
 
-        $fieldset->addField('comment', 'hidden', array(
-            'name' => 'comment',
-            'label' => $this->_getHelper()->__('Config Path'),
-            'title' => $this->_getHelper()->__('Config Path'),
-            'after_element_html' => $model->getFieldsConfig()->getComment(),
-        ));
+
+        if($model->getFieldsConfig()->getComment()) {
+            /** @todo display comment as column */
+            $commentHtml = $this->_getHelper()->__('Comment: ') . $model->getFieldsConfig()->getComment();
+            $fieldset->addField('comment', 'hidden', array(
+                'name' => 'comment',
+                'label' => $this->_getHelper()->__('Config Path'),
+                'title' => $this->_getHelper()->__('Config Path'),
+                'after_element_html' =>  $commentHtml,
+            ));
+        }
+
 
         $fieldset->addField('scope', 'select', array(
             'name' => 'scope',

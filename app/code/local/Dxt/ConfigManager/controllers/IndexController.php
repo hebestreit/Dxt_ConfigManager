@@ -38,8 +38,8 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
         } else {
             try {
                 foreach ($ids as $id) {
-                    $model = Mage::getSingleton('dxt_configmanager/config')->load($id);
-                    $model->delete();
+                    $configData = Mage::getSingleton('dxt_configmanager/config_data')->load($id);
+                    $configData->delete();
                 }
 
                 $this->_getSession()->addSuccess(
@@ -61,11 +61,11 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
     public function editAction()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = Mage::getModel('dxt_configmanager/config');
+        $configData = Mage::getModel('dxt_configmanager/config_data');
 
         if ($id) {
-            $model->load($id);
-            if (!$model->getId()) {
+            $configData->load($id);
+            if (!$configData->getId()) {
                 $this->_getSession()->addError(
                     Mage::helper('dxt_configmanager')->__('This Configuration no longer exists.')
                 );
@@ -76,10 +76,20 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
 
         $data = $this->_getSession()->getFormData(true);
         if (!empty($data)) {
-            $model->setData($data);
+            $configData->setData($data);
+        } else {
+            $configPathArray = array(
+                'section' => $this->getRequest()->getParam('section'),
+                'group' => $this->getRequest()->getParam('group'),
+                'field' => $this->getRequest()->getParam('field'),
+            );
+
+            $configPath = Mage::helper('dxt_configmanager')->getConfigPath($configPathArray);
+            $data = array_merge($configPathArray, array('path' => $configPath));
+            $configData->setData($data);
         }
 
-        Mage::register('current_model', $model);
+        Mage::register('current_model', $configData);
 
         $this->loadLayout();
         $this->_addContent($this->getLayout()->createBlock('dxt_configmanager/config_data_edit'));
@@ -97,10 +107,10 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
         if ($data = $this->getRequest()->getPost()) {
 
             $id = $this->getRequest()->getParam('id');
-            $model = Mage::getModel('dxt_configmanager/config');
+            $configData = Mage::getModel('dxt_configmanager/config_data');
             if ($id) {
-                $model->load($id);
-                if (!$model->getId()) {
+                $configData->load($id);
+                if (!$configData->getId()) {
                     $this->_getSession()->addError(
                         Mage::helper('dxt_configmanager')->__('This Configuration no longer exists.')
                     );
@@ -111,9 +121,9 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
 
             // save model
             try {
-                $model->addData($data);
+                $configData->addData($data);
                 $this->_getSession()->setFormData($data);
-                $model->save();
+                $configData->save();
                 $this->_getSession()->setFormData(false);
                 $this->_getSession()->addSuccess(
                     Mage::helper('dxt_configmanager')->__('The Configuration has been saved.')
@@ -128,7 +138,7 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
             }
 
             if ($redirectBack) {
-                $this->_redirect('*/*/edit', array('id' => $model->getId()));
+                $this->_redirect('*/*/edit', array('id' => $configData->getId()));
                 return;
             }
         }
@@ -140,7 +150,7 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
         if ($id = $this->getRequest()->getParam('id')) {
             try {
                 // init model and delete
-                $model = Mage::getModel('dxt_configmanager/config');
+                $model = Mage::getModel('dxt_configmanager/config_data');
                 $model->load($id);
                 if (!$model->getId()) {
                     Mage::throwException(Mage::helper('dxt_configmanager')->__('Unable to find a Configuration to delete.'));
@@ -165,11 +175,11 @@ class Dxt_ConfigManager_IndexController extends Mage_Adminhtml_Controller_Action
             $this->_redirect('*/*/edit', array('id' => $id));
             return;
         }
-// display error message
+        // display error message
         $this->_getSession()->addError(
             Mage::helper('dxt_configmanager')->__('Unable to find a Configuration to delete.')
         );
-// go to grid
+        // go to grid
         $this->_redirect('*/*/index');
     }
 }

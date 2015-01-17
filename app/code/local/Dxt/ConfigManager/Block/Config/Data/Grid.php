@@ -18,13 +18,22 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
         $this->setSaveParametersInSession(true);
     }
 
+    /**
+     * Prepare collection
+     * @return Mage_Adminhtml_Block_Widget_Grid
+     */
     protected function _prepareCollection()
     {
-        $collection = Mage::getModel('dxt_configmanager/config')->getCollection();
+        $collection = Mage::getModel('dxt_configmanager/config_data')->getCollection();
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
 
+    /**
+     * Prepare grid colums
+     * @todo implement filtering and sorting
+     * @return $this
+     */
     protected function _prepareColumns()
     {
 
@@ -32,7 +41,24 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
             array(
                 'header' => $this->__('Config Id'),
                 'width' => '50px',
-                'index' => 'config_id'
+                'index' => 'config_id',
+                'sortable'  => false,
+                'filter'  => false,
+            )
+        );
+
+        $this->addColumn('type',
+            array(
+                'header' => $this->__('Type'),
+                'width' => '50px',
+                'index' => 'type',
+                'type'      => 'options',
+                'options'   => array(
+                    'db' => 'Database',
+                    'xml' => 'XML-File',
+                ),
+                'sortable'  => false,
+                'filter'  => false,
             )
         );
 
@@ -40,7 +66,9 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
             array(
                 'header' => $this->__('Scope'),
                 'width' => '50px',
-                'index' => 'scope'
+                'index' => 'scope',
+                'sortable'  => false,
+                'filter' => false,
             )
         );
 
@@ -48,7 +76,9 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
             array(
                 'header' => $this->__('Scope Id'),
                 'width' => '50px',
-                'index' => 'scope_id'
+                'index' => 'scope_id',
+                'sortable'  => false,
+                'filter' => false,
             )
         );
 
@@ -56,17 +86,20 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
             array(
                 'header'=> Mage::helper('catalog')->__('Websites'),
                 'width' => '100px',
-                'sortable'  => false,
                 'index'     => 'scope_id',
                 'type'      => 'options',
                 'options'   => Mage::getSingleton('adminhtml/system_store')->getWebsiteOptionHash(true),
+                'sortable'  => false,
+                'filter'  => false,
             ));
 
         $this->addColumn('path',
             array(
                 'header' => $this->__('Path'),
                 'width' => '50px',
-                'index' => 'path'
+                'index' => 'path',
+                'sortable'  => false,
+                'filter'  => false,
             )
         );
 
@@ -74,32 +107,42 @@ class Dxt_ConfigManager_Block_Config_Data_Grid extends Mage_Adminhtml_Block_Widg
             array(
                 'header' => $this->__('Value'),
                 'width' => '50px',
-                'index' => 'value'
+                'index' => 'value',
+                'sortable'  => false,
+                'filter'  => false,
             )
         );
 
-        $this->addExportType('*/*/exportCsv', $this->__('CSV'));
-
-        $this->addExportType('*/*/exportExcel', $this->__('Excel XML'));
+        /** @todo implement export */
+        // $this->addExportType('*/*/exportCsv', $this->__('CSV'));
+        // $this->addExportType('*/*/exportExcel', $this->__('Excel XML'));
 
         return parent::_prepareColumns();
     }
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/*/edit', array('id' => $row->getId()));
+        // explode config path to his parts
+        $parameters = Mage::helper('dxt_configmanager')->getConfigPathArray($row->getPath());
+        if(is_int($row->getId())) {
+            $parameters['id'] = $row->getId();
+        }
+
+
+        return $this->getUrl('*/*/edit', $parameters);
     }
 
     protected function _prepareMassaction()
     {
-        $modelPk = Mage::getModel('dxt_configmanager/config')->getResource()->getIdFieldName();
-        $this->setMassactionIdField($modelPk);
-        $this->getMassactionBlock()->setFormFieldName('ids');
-        // $this->getMassactionBlock()->setUseSelectAll(false);
-        $this->getMassactionBlock()->addItem('delete', array(
-            'label' => $this->__('Delete'),
-            'url' => $this->getUrl('*/*/massDelete'),
-        ));
-        return $this;
+        /** @todo implement later */
+        //        $modelPk = Mage::getModel('dxt_configmanager/config_data')->getResource()->getIdFieldName();
+        //        $this->setMassactionIdField($modelPk);
+        //        $this->getMassactionBlock()->setFormFieldName('ids');
+        //        // $this->getMassactionBlock()->setUseSelectAll(false);
+        //        $this->getMassactionBlock()->addItem('delete', array(
+        //            'label' => $this->__('Delete'),
+        //            'url' => $this->getUrl('*/*/massDelete'),
+        //        ));
+        //        return $this;
     }
 }
